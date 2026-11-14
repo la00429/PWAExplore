@@ -12,40 +12,17 @@ import { CommonModule } from '@angular/common';
 })
 export class App implements OnInit, OnDestroy {
   isOnline: boolean = navigator.onLine;
-  installable = false;
-  private deferredInstallPrompt: BeforeInstallPromptEvent | null = null;
 
   private onlineHandler = () => this.isOnline = true;
   private offlineHandler = () => this.isOnline = false;
-  private installPromptHandler = (event: Event) => {
-    event.preventDefault();
-    this.deferredInstallPrompt = event as BeforeInstallPromptEvent;
-    this.installable = true;
-  };
 
   ngOnInit() {
     window.addEventListener('online', this.onlineHandler);
     window.addEventListener('offline', this.offlineHandler);
-    window.addEventListener('beforeinstallprompt', this.installPromptHandler);
   }
 
   ngOnDestroy() {
     window.removeEventListener('online', this.onlineHandler);
     window.removeEventListener('offline', this.offlineHandler);
-    window.removeEventListener('beforeinstallprompt', this.installPromptHandler);
   }
-
-  async installApp() {
-    if (!this.deferredInstallPrompt) return;
-
-    await this.deferredInstallPrompt.prompt();
-    await this.deferredInstallPrompt.userChoice;
-    this.deferredInstallPrompt = null;
-    this.installable = false;
-  }
-}
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }

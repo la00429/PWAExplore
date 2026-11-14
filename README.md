@@ -57,3 +57,4 @@ La implementación del taller está documentada en [`INFORME_SEGURIDAD_PWA.md`](
 - Hash de script y `strict-dynamic`.
 - Despliegue automatizado a GitHub Pages mediante HTTPS en [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
 - Despliegue alternativo en Netlify con cabeceras HTTP CSP en [`netlify.toml`](netlify.toml) y [`public/_headers`](public/_headers).
+- Bootstrap, Bootstrap Icons y Animate.css se sirven localmente desde `node_modules`, sin depender de CDNs para la interfaz.

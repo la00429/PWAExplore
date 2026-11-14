@@ -72,7 +72,7 @@ Se usan dos controles:
 - `upgrade-insecure-requests` convierte solicitudes HTTP de recursos en HTTPS.
 - `block-all-mixed-content` bloquea contenido mixto inseguro.
 
-La API consumida ya utiliza `https://rickandmortyapi.com`.
+La API consumida ya utiliza `https://rickandmortyapi.com`. Bootstrap, Bootstrap Icons y Animate.css se empaquetan localmente para evitar dependencias de almacenamiento de terceros y reducir avisos de privacidad del navegador.
 
 ## Conclusión
 
