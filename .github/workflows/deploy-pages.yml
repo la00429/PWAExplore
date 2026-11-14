@@ -31,6 +31,10 @@ jobs:
         run: npm run build -- --base-href /PWAExplore/
       - name: Preserve SPA routes
         run: cp dist/pwa-explorador/browser/index.html dist/pwa-explorador/browser/404.html
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
