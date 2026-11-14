@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary mb-4 sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-success" routerLink="/">
+      <i class="bi bi-robot me-2"></i>Multiverso PWA
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/explorador" routerLinkActive="active">
+            <i class="bi bi-search me-1"></i> Explorar & Tabla
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/favoritos" routerLinkActive="active">
+            <i class="bi bi-bookmark-star-fill text-warning me-1"></i> Favoritos (Local)
+          </a>
+        </li>
+      </ul>
+      <span class="badge" [ngClass]="isOnline ? 'bg-success' : 'bg-danger'">
+        <i class="bi" [ngClass]="isOnline ? 'bi-wifi' : 'bi-wifi-off'"></i>
+        {{ isOnline ? ' En línea' : ' Modo Offline' }}
+      </span>
+      <button *ngIf="installable" type="button" class="btn btn-success btn-sm ms-2" (click)="installApp()">
+        <i class="bi bi-download me-1"></i> Instalar aplicación
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="container pb-5">
+  <router-outlet></router-outlet>
+</div>

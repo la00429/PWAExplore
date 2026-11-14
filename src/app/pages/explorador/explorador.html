@@ -1,0 +1,177 @@
+<div class="row mb-4">
+  <div class="col-12">
+    <h2 class="text-success"><i class="bi bi-search me-2"></i>Explorador de Personajes</h2>
+    <p class="text-muted">Consulta la API pública, realiza búsquedas con múltiples filtros y visualiza datos en tablas interactiva o cuadrícula.</p>
+  </div>
+</div>
+
+<!-- FUNCIONALIDAD 1: Captura de Datos (Formulario de Filtros) -->
+<div class="card bg-dark border-secondary p-3 mb-4 shadow">
+  <h5 class="card-title text-light mb-3"><i class="bi bi-funnel me-2"></i>Filtros de Búsqueda</h5>
+  <form [formGroup]="searchForm" (ngSubmit)="buscar(1)" class="row g-3" novalidate>
+    <div class="col-md-4">
+      <label class="form-label">Nombre del Personaje</label>
+      <input type="text" class="form-control" formControlName="nombre" maxlength="50" placeholder="Ej: Rick, Morty, Summer..." autocomplete="off">
+      @if (searchForm.controls.nombre.invalid && searchForm.controls.nombre.touched) {
+        <small class="text-warning">Máximo 50 caracteres y solo texto seguro.</small>
+      }
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Estado</label>
+      <select class="form-select" formControlName="estado">
+        <option value="">Todos los estados</option>
+        <option value="alive">Vivo (Alive)</option>
+        <option value="dead">Muerto (Dead)</option>
+        <option value="unknown">Desconocido</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Especie</label>
+      <input type="text" class="form-control" formControlName="especie" maxlength="40" placeholder="Ej: Human, Alien..." autocomplete="off">
+      @if (searchForm.controls.especie.invalid && searchForm.controls.especie.touched) {
+        <small class="text-warning">Máximo 40 caracteres y solo texto seguro.</small>
+      }
+    </div>
+    <div class="col-md-2 d-flex align-items-end gap-2">
+      <button type="submit" class="btn btn-success w-100">
+        <i class="bi bi-search"></i> Buscar
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="limpiarFiltros()" title="Limpiar filtros">
+        <i class="bi bi-arrow-counterclockwise"></i>
+      </button>
+    </div>
+  </form>
+  @if (validationMessage) {
+    <div class="alert alert-warning mt-3 mb-0" role="alert">
+      <i class="bi bi-shield-check me-2"></i>{{ validationMessage }}
+    </div>
+  }
+  @if (sanitizedQuery) {
+    <small class="text-success d-block mt-2">
+      <i class="bi bi-shield-lock me-1"></i>Consulta validada y saneada: {{ sanitizedQuery }}
+    </small>
+  }
+</div>
+
+<!-- Selector de Vista y Estado de Resultados -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <span class="badge bg-secondary me-2">Total: {{totalItems}} resultados</span>
+    <span class="badge bg-outline-info">Página {{paginaActual}} de {{totalPaginas}}</span>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-sm" [ngClass]="vistaTabla ? 'btn-success' : 'btn-outline-secondary'" (click)="vistaTabla = true">
+      <i class="bi bi-table"></i> Vista Tabla
+    </button>
+    <button class="btn btn-sm" [ngClass]="!vistaTabla ? 'btn-success' : 'btn-outline-secondary'" (click)="vistaTabla = false">
+      <i class="bi bi-grid-fill"></i> Vista Tarjetas
+    </button>
+  </div>
+</div>
+
+<!-- Indicador de Carga -->
+@if (cargando) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-success" role="status"></div>
+    <p class="mt-2 text-muted">Cargando personajes desde la API...</p>
+  </div>
+}
+
+<!-- Mensaje de Error / Sin resultados -->
+@if (error && !cargando) {
+  <div class="alert alert-warning text-center my-4">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{error}}
+  </div>
+}
+
+<!-- FUNCIONALIDAD 2: Visualización en Tabla Interactiva -->
+@if (!cargando && !error && vistaTabla) {
+  <div class="table-responsive card border-secondary shadow mb-4">
+    <table class="table table-dark table-hover align-middle mb-0">
+      <thead class="table-group-divider border-success">
+        <tr>
+          <th>Foto</th>
+          <th>Nombre</th>
+          <th>Estado</th>
+          <th>Especie</th>
+          <th>Género</th>
+          <th>Origen</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of personajes; track p) {
+          <tr class="animated fadeIn">
+            <td>
+              <img [src]="p.image" [alt]="p.name" width="45" height="45" class="rounded-circle border border-secondary">
+            </td>
+            <td class="fw-bold">{{p.name}}</td>
+            <td>
+          <span class="badge" [ngClass]="{
+            'badge-alive': p.status === 'Alive',
+            'badge-dead': p.status === 'Dead',
+            'badge-unknown': p.status === 'unknown'
+          }">{{p.status}}</span>
+            </td>
+            <td>{{p.species}}</td>
+            <td>{{p.gender}}</td>
+            <td>{{p.origin.name}}</td>
+            <td class="text-center">
+              <a [routerLink]="['/detalle', p.id]" class="btn btn-sm btn-outline-info me-2" title="Ver Detalle">
+                <i class="bi bi-eye-fill"></i> Ver
+              </a>
+              <button class="btn btn-sm" [ngClass]="esFav(p.id) ? 'btn-warning' : 'btn-outline-warning'" (click)="toggleFavorito(p)" title="Guardar localmente">
+                <i class="bi" [ngClass]="esFav(p.id) ? 'bi-star-fill' : 'bi-star'"></i>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<!-- Visualización alternativa en Tarjetas -->
+@if (!cargando && !error && !vistaTabla) {
+  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-4">
+    @for (p of personajes; track p) {
+      <div class="col">
+        <div class="card bg-dark border-secondary h-100">
+          <img [src]="p.image" class="card-img-top" [alt]="p.name">
+          <div class="card-body">
+            <h5 class="card-title text-success">{{p.name}}</h5>
+            <p class="card-text mb-1"><small class="text-muted">Especie:</small> {{p.species}}</p>
+            <p class="card-text mb-2">
+          <span class="badge" [ngClass]="{
+            'badge-alive': p.status === 'Alive',
+            'badge-dead': p.status === 'Dead',
+            'badge-unknown': p.status === 'unknown'
+          }">{{p.status}}</span>
+            </p>
+            <div class="d-flex justify-content-between mt-3">
+              <a [routerLink]="['/detalle', p.id]" class="btn btn-sm btn-outline-info">
+                <i class="bi bi-eye"></i> Detalle
+              </a>
+              <button class="btn btn-sm" [ngClass]="esFav(p.id) ? 'btn-warning' : 'btn-outline-warning'" (click)="toggleFavorito(p)">
+                <i class="bi" [ngClass]="esFav(p.id) ? 'bi-star-fill' : 'bi-star'"></i> {{esFav(p.id) ? 'Guardado' : 'Guardar'}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<!-- Paginación -->
+@if (!cargando && totalPaginas > 1) {
+  <div class="d-flex justify-content-center align-items-center gap-2">
+    <button class="btn btn-outline-success" [disabled]="paginaActual === 1" (click)="buscar(paginaActual - 1)">
+      <i class="bi bi-chevron-left"></i> Anterior
+    </button>
+    <span class="px-3 text-muted">Página {{paginaActual}} de {{totalPaginas}}</span>
+    <button class="btn btn-outline-success" [disabled]="paginaActual === totalPaginas" (click)="buscar(paginaActual + 1)">
+      Siguiente <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+}
