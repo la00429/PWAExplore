@@ -50,7 +50,7 @@ La política está en `public/_headers` mediante la cabecera HTTP `Content-Secur
 | CSS, imágenes y fuentes | `style-src`, `img-src` y `font-src` |
 | Bloquear objetos | `object-src 'none'` |
 | Bloquear marcos | `frame-src 'none'` y `frame-ancestors 'none'` |
-| Hash de script | fuente `sha256-...` en `script-src-elem` |
+| Hash de script | fuente `sha256-...` documentada en `script-src-elem` |
 | Políticas por ubicación/esquema | `'self'`, `https://cdn.jsdelivr.net` y `https://rickandmortyapi.com` |
 | Control estricto | `base-uri 'self'`, `form-action 'self'`, `manifest-src 'self'` |
 | Strict Dynamic | `'strict-dynamic'` en `script-src` |
